@@ -1,0 +1,32 @@
+# update cache and upgrade all packages
+- name: install wordpress
+  hosts: myhosts
+  remote_user: root
+
+  vars_files:
+    - vars/vars.yml
+
+  tasks:
+    - name: update apt cache and optionally upgrades system
+      apt:
+        update_cache: yes
+        upgrade: yes
+        cache_valid_time: 3600
+
+    - name: install nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: install mysql server
+      apt:
+         name: mysql-server
+         state: present
+
+
+    - name: install php and common extensions
+      # TODO: ADD ondrej/php PPA, update cache and install php packages
+      apt:
+        name: "{{ php_packages }}"
+        state: present
+
