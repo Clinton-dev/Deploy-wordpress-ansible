@@ -23,6 +23,11 @@
          name: mysql-server
          state: present
 
+    - name: Add PPA for PHP 8.2
+      apt_repository:
+           repo: ppa:ondrej/php
+           update_cache: true
+           state: present
 
     - name: install php and common extensions
       # TODO: ADD ondrej/php PPA, update cache and install php packages
