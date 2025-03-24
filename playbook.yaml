@@ -34,6 +34,7 @@
         name: "{{ php_packages }}"
         state: present
 
+# TODO: how can i combaine the loging root &  password for both tasks
     - name: Create a new database
       community.mysql.mysql_db:
           name: "{{ db_name }}"
@@ -51,3 +52,14 @@
           login_user: root
           login_password: "{{ db_root_password }}"
           login_unix_socket: /var/run/mysqld/mysqld.sock
+
+    - name: Create HTML directory
+      file:
+        path: "/var/www/html/{{ domain_name }}"
+        state: directory
+        mode: 0755
+
+    - name: Download Wordpress
+      get_url:
+        url: "https://wordpress.org/latest.tar.gz" 
+        dest: "/var/www/html/{{ domain_name}} }}"
