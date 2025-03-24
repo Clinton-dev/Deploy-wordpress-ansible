@@ -57,9 +57,22 @@
       file:
         path: "/var/www/html/{{ domain_name }}"
         state: directory
+        owner: www-data
+        group: www-data
         mode: 0755
 
     - name: Download Wordpress
       get_url:
-        url: "https://wordpress.org/latest.tar.gz" 
-        dest: "/var/www/html/{{ domain_name}} }}"
+        url: "https://wordpress.org/latest.tar.gz"
+        dest: "/tmp/latest.tar.gz"
+        mode: 0644
+      args:
+        creates: "/temp/latest.tar.gz"
+
+    - name: Extract Wordpress
+      unarchive:
+        src: "/tmp/latest.tar.gz"
+        dest: "/var/www/html/{{ domain_name}}"
+        remote_src: no
+        extra_opts: [--strip-components=1]
+        creates: "/var/www/html/{{ domain_name }}/wp-settings.php"
