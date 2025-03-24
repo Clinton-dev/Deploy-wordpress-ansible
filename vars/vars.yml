@@ -11,3 +11,4 @@ php_packages:
 db_user: "test_user"
 db_password: "mM7!kCtBW9"
 db_name: "test_db"
+db_root_password: "s6s!@GuH5j"
