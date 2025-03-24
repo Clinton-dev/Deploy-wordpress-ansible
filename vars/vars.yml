@@ -7,3 +7,7 @@ php_packages:
   - "php{{php_version}}-xml"
   - "php{{php_version}}-zip"
   - "php{{php_version}}-imagick"
+
+db_user: "test_user"
+db_password: "mM7!kCtBW9"
+db_name: "test_db"
