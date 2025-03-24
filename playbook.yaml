@@ -30,7 +30,6 @@
            state: present
 
     - name: install php and common extensions
-      # TODO: ADD ondrej/php PPA, update cache and install php packages
       apt:
         name: "{{ php_packages }}"
         state: present

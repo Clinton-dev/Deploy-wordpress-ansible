@@ -1,10 +1,9 @@
-vars:
-  php_version: 8.2
-  php_packages:
-    - "php{{php_version}}-fpm"
-    - "php{{php_version}}-mysql"
-    - "php{{php_version}}-curl"
-    - "php{{php_version}}-mbstring"
-    - "php{{php_version}}-xml"
-    - "php{{php_version}}-zip"
-    - "php{{php_version}}-imagick"
+php_version: 8.2
+php_packages:
+  - "php{{php_version}}-fpm"
+  - "php{{php_version}}-mysql"
+  - "php{{php_version}}-curl"
+  - "php{{php_version}}-mbstring"
+  - "php{{php_version}}-xml"
+  - "php{{php_version}}-zip"
+  - "php{{php_version}}-imagick"
