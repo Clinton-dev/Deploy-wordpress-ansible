@@ -1,0 +1,70 @@
+server {
+    server_name {{ domain_name }} www.{{ domain_name }};
+
+    add_header X-Cache $upstream_cache_status;
+    add_header Surrogate-Control "max-age=3600000000, stale-while-revalidate=60, stale-if-error=3600";
+    add_header Cache-Control "public, max-age=864000000";
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+    add_header X-Frame-Options SAMEORIGIN;
+    add_header Referrer-Policy no-referrer;
+    add_header X-Content-Type-Options nosniff;
+    add_header Permissions-Policy "geolocation=(self), microphone=(), camera=(), midi=(), magnetometer=(), usb=(), accelerometer=(), vr=(), xr-spatial-tracking=(), payment=(self)";
+
+
+    root /var/www/html/{{ domain_name }};
+    index index.php index.html index.htm;
+
+    location / {
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php{{php_version}}-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PHP_VALUE "session.save_handler = files";
+        fastcgi_param PHP_ADMIN_VALUE "open_basedir=/var/www/html/{{ domain_name }}:/tmp/";
+        fastcgi_buffers 16 16k;
+        fastcgi_buffer_size 32k;
+        fastcgi_read_timeout 300s;
+    }
+
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|wav|svg)$ {
+        expires max;
+        log_not_found off;
+    }
+
+    location ~ /\.ht {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+
+    location ~ /.user.ini {
+      deny all;
+      access_log off;
+      log_not_found off;
+    }
+
+    location ~ /.(svn|git)/* {
+       deny all;
+       access_log off;
+       log_not_found off;
+    }
+
+    location ~* /xmlrpc.php$ {
+       deny all;
+    }
+
+    location ~* /(?:uploads|files|wp-content|wp-includes|akismet)/.*\.php$ {
+        error_log /var/log/nginx/blocked_php_attempts.log warn;
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+
+}
+
+

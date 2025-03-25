@@ -137,11 +137,8 @@
         logged_in_salt: "{{ wp_salts.content | regex_search(\"define\\(\\s*'LOGGED_IN_SALT'\\s*,\\s*'([^']+)'\\s*\\);\", '\\1') }}"
         nonce_salt: "{{ wp_salts.content | regex_search(\"define\\(\\s*'NONCE_SALT'\\s*,\\s*'([^']+)'\\s*\\);\", '\\1') }}"
 
-    - name: Set security keys wp-config.php
-      lineinfile:
-        path: "/var/www/html/{{ domain_name }}/wp-config.php"
-        regexp: "^define\\(\\s*'{{ item.key }}'\\s*,\\s*'.*'\\s*\\);"
-        line: "define( '{{ item.key }}', '{{ item.value }}' );"
+    - debug:
+        msg: "{{ item.key }} = {{ item.value }}"
       loop:
         - { key: 'AUTH_KEY', value: "{{ auth_key }}" }
         - { key: 'SECURE_AUTH_KEY', value: "{{ secure_auth_key }}" }
@@ -151,4 +148,54 @@
         - { key: 'SECURE_AUTH_SALT', value: "{{ secure_auth_salt }}" }
         - { key: 'LOGGED_IN_SALT', value: "{{ logged_in_salt }}" }
         - { key: 'NONCE_SALT', value: "{{ nonce_salt }}" }
+
+    - name: Set security keys wp-config.php
+      lineinfile:
+        path: "/var/www/html/{{ domain_name }}/wp-config.php"
+        regexp: "^define\\(\\s*'{{ item.key }}'\\s*,\\s*'.*'\\s*\\);"
+        line: "define( '{{ item.key }}', '{{ item.value | join('') }}' );"
+      loop:
+        - { key: 'AUTH_KEY', value: "{{ auth_key }}" }
+        - { key: 'SECURE_AUTH_KEY', value: "{{ secure_auth_key }}" }
+        - { key: 'LOGGED_IN_KEY', value: "{{ logged_in_key }}" }
+        - { key: 'NONCE_KEY', value: "{{ nonce_key }}" }
+        - { key: 'AUTH_SALT', value: "{{ auth_salt }}" }
+        - { key: 'SECURE_AUTH_SALT', value: "{{ secure_auth_salt }}" }
+        - { key: 'LOGGED_IN_SALT', value: "{{ logged_in_salt }}" }
+        - { key: 'NONCE_SALT', value: "{{ nonce_salt }}" }
+
+    - name: Setup nginx configurations
+      template:
+        src: templates/wordpress_nginx.j2
+        dest: "/etc/nginx/sites-available/{{ domain_name }}.conf"
+        owner: root
+        group: root
+
+    - name: Create symlink to sites-enabled
+      file:
+        src: "/etc/nginx/sites-available/{{ domain_name }}.conf"
+        dest: "/etc/nginx/sites-enabled/{{ domain_name }}.conf"
+        owner: root
+        group: root
+        state: link
+
+    - name: Test Nginx configuration
+      command: nginx -t
+      register: nginx_test_result
+      changed_when: false  # ✅ Correct keyword
+
+    - name: Dislay Nginx test output
+      debug:
+        msg: "{{ nginx_test_result.stdout_lines }}"
+
+    - name: Reload nginx if config is valid
+      service:
+        name: nginx
+        state: reloaded
+      when: nginx_test_result.rc == 0
+
+    - name: Display site live URL
+      debug:
+        msg: "Your site is live at: http://{{ domain_name }} or https://{{ domain_name }}"
+
 
