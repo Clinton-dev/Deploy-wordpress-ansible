@@ -34,7 +34,6 @@
         name: "{{ php_packages }}"
         state: present
 
-# TODO: how can i combaine the loging root &  password for both tasks
     - name: Create a new database
       community.mysql.mysql_db:
           name: "{{ db_name }}"
@@ -61,18 +60,37 @@
         group: www-data
         mode: 0755
 
-    - name: Download Wordpress
+    - name: Check if wordpress is already downloaded
+      ansible.builtin.stat:
+        path: "tmp/latest.tar.gz"
+      register: stat_result
+
+    - name: Download Wordpress  if not present
       get_url:
         url: "https://wordpress.org/latest.tar.gz"
         dest: "/tmp/latest.tar.gz"
         mode: 0644
-      args:
-        creates: "/temp/latest.tar.gz"
+      when: not stat_result.stat.exists
 
     - name: Extract Wordpress
       unarchive:
         src: "/tmp/latest.tar.gz"
-        dest: "/var/www/html/{{ domain_name}}"
-        remote_src: no
+        dest: "/var/www/html/{{ domain_name }}"
+        group: www-data
+        owner: www-data
+        remote_src: yes
         extra_opts: [--strip-components=1]
         creates: "/var/www/html/{{ domain_name }}/wp-settings.php"
+
+    - name: Find wordpress archive
+      find:
+        paths: "/var/www/html/{{ domain_name }}"
+        patterns: "*.tar.gz"
+      register: archive_files
+
+    - name: Delete archive
+      file:
+        state: absent
+        path: "{{item.path}}"
+      loop: "{{ archive_files.files }}"
+      when: archive_files.files | length > 0
