@@ -94,3 +94,47 @@
         path: "{{item.path}}"
       loop: "{{ archive_files.files }}"
       when: archive_files.files | length > 0
+
+    - name: Check if wp-config.php exists
+      stat:
+        path: "/var/www/html/{{ domain_name }}/wp-config.php"
+      register: wp_config
+
+    - name: Copy wp-config-sample to wp-config.php
+      copy:
+        src: "/var/www/html/{{ domain_name }}/wp-config-sample.php"
+        dest: "/var/www/html/{{ domain_name }}/wp-config.php"
+        remote_src: yes
+        group: www-data
+        owner: www-data
+        mode: 0644
+      when: not wp_config.stat.exists
+
+    - name: Update wp-config.php
+      lineinfile:
+        path: "/var/www/html/{{ domain_name }}/wp-config.php"
+        regex: "define\\( '{{item.key}}', '.*' \\);"
+        line: "define( '{{item.key}}', '{{ item.value }}' );"
+      loop:
+        - {key: 'DB_NAME', value: '{{ db_name }}'}
+        - {key: 'DB_USER', value: '{{ db_user }}'}
+        - {key: 'DB_PASSWORD', value: '{{ db_password }}'}
+
+    - name: Fetch Wordpress salts
+      uri:
+        url: "https://api.wordpress.org/secret-key/1.1/salt/"
+        return_content: true
+      register: wp_salts
+
+    - name: Debug wp_salts output
+      debug:
+        var: wp_salts
+
+    - name: Set security keys wp-config.php
+      lineinfile:
+        path: "/var/www/html/{{ domain_name }}/wp-config.php"
+        regex: "^define\\( '.*', '.*' \\);"
+        line: "{{ item }}"
+      loop: "{{ wp_salts.content.split('\n') }}"
+      when: item | length > 0
+
