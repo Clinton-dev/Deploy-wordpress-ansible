@@ -126,15 +126,29 @@
         return_content: true
       register: wp_salts
 
-    - name: Debug wp_salts output
-      debug:
-        var: wp_salts
+    - name: Parse WordPress salts into variables
+      set_fact:
+        auth_key: "{{ wp_salts.content | regex_search(\"define\\(\\s*'AUTH_KEY'\\s*,\\s*'([^']+)'\\s*\\);\", '\\1') }}"
+        secure_auth_key: "{{ wp_salts.content | regex_search(\"define\\(\\s*'SECURE_AUTH_KEY'\\s*,\\s*'([^']+)'\\s*\\);\", '\\1') }}"
+        logged_in_key: "{{ wp_salts.content | regex_search(\"define\\(\\s*'LOGGED_IN_KEY'\\s*,\\s*'([^']+)'\\s*\\);\", '\\1') }}"
+        nonce_key: "{{ wp_salts.content | regex_search(\"define\\(\\s*'NONCE_KEY'\\s*,\\s*'([^']+)'\\s*\\);\", '\\1') }}"
+        auth_salt: "{{ wp_salts.content | regex_search(\"define\\(\\s*'AUTH_SALT'\\s*,\\s*'([^']+)'\\s*\\);\", '\\1') }}"
+        secure_auth_salt: "{{ wp_salts.content | regex_search(\"define\\(\\s*'SECURE_AUTH_SALT'\\s*,\\s*'([^']+)'\\s*\\);\", '\\1') }}"
+        logged_in_salt: "{{ wp_salts.content | regex_search(\"define\\(\\s*'LOGGED_IN_SALT'\\s*,\\s*'([^']+)'\\s*\\);\", '\\1') }}"
+        nonce_salt: "{{ wp_salts.content | regex_search(\"define\\(\\s*'NONCE_SALT'\\s*,\\s*'([^']+)'\\s*\\);\", '\\1') }}"
 
     - name: Set security keys wp-config.php
       lineinfile:
         path: "/var/www/html/{{ domain_name }}/wp-config.php"
-        regex: "^define\\( '.*', '.*' \\);"
-        line: "{{ item }}"
-      loop: "{{ wp_salts.content.split('\n') }}"
-      when: item | length > 0
+        regexp: "^define\\(\\s*'{{ item.key }}'\\s*,\\s*'.*'\\s*\\);"
+        line: "define( '{{ item.key }}', '{{ item.value }}' );"
+      loop:
+        - { key: 'AUTH_KEY', value: "{{ auth_key }}" }
+        - { key: 'SECURE_AUTH_KEY', value: "{{ secure_auth_key }}" }
+        - { key: 'LOGGED_IN_KEY', value: "{{ logged_in_key }}" }
+        - { key: 'NONCE_KEY', value: "{{ nonce_key }}" }
+        - { key: 'AUTH_SALT', value: "{{ auth_salt }}" }
+        - { key: 'SECURE_AUTH_SALT', value: "{{ secure_auth_salt }}" }
+        - { key: 'LOGGED_IN_SALT', value: "{{ logged_in_salt }}" }
+        - { key: 'NONCE_SALT', value: "{{ nonce_salt }}" }
 
