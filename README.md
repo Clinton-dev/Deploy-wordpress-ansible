@@ -40,3 +40,10 @@ ansible-playbook playbook.yaml -i inventory.ini
 
 ### 4️⃣ Access Your Site
 Visit [http://your-domain.com](http://your-domain.com) to complete the setup.  
+
+## 📸 Screenshots
+
+### WordPress Deployment in Action
+![WordPress Setup](screenshots/wordpress-setup.png)
+
+
