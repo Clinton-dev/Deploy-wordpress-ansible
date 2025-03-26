@@ -17,6 +17,7 @@ Before running the playbook, ensure you have:
 - **A Linux server** (Ubuntu/Debian recommended)
 - **SSH access** to the server
 - **A domain name** pointed to the server
+- **inventory.ini** defining the target server
 
 ## ⚙️ Setup & Usage
 
@@ -35,8 +36,48 @@ Edit `/vars/vars.yml` to set:
 
 ### 3️⃣ Run the Playbook
 ```sh
-ansible-playbook wordpress_new_server_setup.yaml -i inventory.ini
+ansible-playbook wordpress_existing_server_setup.yaml -i inventory.ini --ask-vault-pass
 ```
+#### 🔒 Securing Sensitive Data with Ansible Vault
+To prevent exposing credentials in a public repository, store sensitive variables using Ansible Vault.
+
+1️⃣ Encrypting Your Variables File
+Run the following command to encrypt your vars.yml file:
+```angular2html
+ansible-vault encrypt vars/vars.yml
+```
+You'll be prompted to set a password. This password will be required whenever you need to edit or use the file.
+
+2️⃣ Editing Encrypted Variables
+To modify the encrypted vars.yml file:
+
+```angular2html
+ansible-vault edit vars/vars.yml
+```
+
+3️⃣ Running the Playbook with Vault
+
+Since the file is encrypted, use the --ask-vault-pass flag when running the playbook:
+
+```angular2html
+ansible-playbook wordpress_existing_server_setup.yaml -i inventory.ini --ask-vault-pass
+```
+Alternatively, store the vault password in a file and use:
+
+```angular2html
+ansible-playbook wordpress_existing_server_setup.yaml -i inventory.ini --vault-password-file .vault_pass
+```
+Note: Never commit the .vault_pass file to Git.
+
+4️⃣ Decrypting the File (If Needed)
+
+If you need to decrypt the file permanently:
+
+```angular2html
+ansible-vault decrypt vars/vars.yml
+```
+
+This ensures that credentials such as db_user, db_password, and db_root_password remain safe while keeping your repository public.
 
 ### 4️⃣ Access Your Site
 Visit [http://your-domain.com](http://your-domain.com) to complete the setup.  
