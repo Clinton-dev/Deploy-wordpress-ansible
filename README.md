@@ -13,7 +13,7 @@ This project automates the installation and setup of WordPress with Nginx using 
 
 Before running the playbook, ensure you have:
 
-- **Ansible installed** (`pip install ansible`)
+- **Ansible installed** – Follow the [Ansible installation guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#id11) and use `pipx` for installation: `pipx install --include-deps ansible`. For more information on `pipx`, visit the [pipx documentation](https://pipx.pypa.io/stable/).
 - **A Linux server** (Ubuntu/Debian recommended)
 - **SSH access** to the server
 - **A domain name** pointed to the server
