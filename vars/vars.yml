@@ -1,4 +1,4 @@
-php_version: 8.2
+php_version: 8.1
 php_packages:
   - "php{{php_version}}-fpm"
   - "php{{php_version}}-mysql"
@@ -8,8 +8,8 @@ php_packages:
   - "php{{php_version}}-zip"
   - "php{{php_version}}-imagick"
 
-db_user: "hardy_user"
-db_password: "YZ0Z#&jr81"
-db_name: "test_db_hardy"
+db_user: "bossorec_user"
+db_password: "lN9V^SRl&A"
+db_name: "bossorec_db"
 db_root_password: "s6s!@GuH5j"
-domain_name: "test3.clintonwambugu.com"
+domain_name: "bossorec.cmacademy.co.ke"

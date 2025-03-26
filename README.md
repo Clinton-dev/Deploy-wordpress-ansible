@@ -35,7 +35,7 @@ Edit `/vars/vars.yml` to set:
 
 ### 3️⃣ Run the Playbook
 ```sh
-ansible-playbook playbook.yaml -i inventory.ini
+ansible-playbook wordpress_new_server_setup.yaml -i inventory.ini
 ```
 
 ### 4️⃣ Access Your Site
