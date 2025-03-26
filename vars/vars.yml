@@ -8,8 +8,8 @@ php_packages:
   - "php{{php_version}}-zip"
   - "php{{php_version}}-imagick"
 
-db_user: "test_user"
-db_password: "mM7!kCtBW9"
-db_name: "test_db"
+db_user: "test_user_1234"
+db_password: "YZ0Z#&jr81"
+db_name: "test_db1234"
 db_root_password: "s6s!@GuH5j"
-domain_name: "wordpres.ansible.clintonwambugu.com"
+domain_name: "test.clintonwambugu.com"

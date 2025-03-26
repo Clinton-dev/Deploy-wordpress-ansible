@@ -137,17 +137,6 @@
         logged_in_salt: "{{ wp_salts.content | regex_search(\"define\\(\\s*'LOGGED_IN_SALT'\\s*,\\s*'([^']+)'\\s*\\);\", '\\1') }}"
         nonce_salt: "{{ wp_salts.content | regex_search(\"define\\(\\s*'NONCE_SALT'\\s*,\\s*'([^']+)'\\s*\\);\", '\\1') }}"
 
-    - debug:
-        msg: "{{ item.key }} = {{ item.value }}"
-      loop:
-        - { key: 'AUTH_KEY', value: "{{ auth_key }}" }
-        - { key: 'SECURE_AUTH_KEY', value: "{{ secure_auth_key }}" }
-        - { key: 'LOGGED_IN_KEY', value: "{{ logged_in_key }}" }
-        - { key: 'NONCE_KEY', value: "{{ nonce_key }}" }
-        - { key: 'AUTH_SALT', value: "{{ auth_salt }}" }
-        - { key: 'SECURE_AUTH_SALT', value: "{{ secure_auth_salt }}" }
-        - { key: 'LOGGED_IN_SALT', value: "{{ logged_in_salt }}" }
-        - { key: 'NONCE_SALT', value: "{{ nonce_salt }}" }
 
     - name: Set security keys wp-config.php
       lineinfile:
