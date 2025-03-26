@@ -8,8 +8,8 @@ php_packages:
   - "php{{php_version}}-zip"
   - "php{{php_version}}-imagick"
 
-db_user: "test_user_1234"
+db_user: "hardy_user"
 db_password: "YZ0Z#&jr81"
-db_name: "test_db1234"
+db_name: "test_db_hardy"
 db_root_password: "s6s!@GuH5j"
-domain_name: "test.clintonwambugu.com"
+domain_name: "test3.clintonwambugu.com"
