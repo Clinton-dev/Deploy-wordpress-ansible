@@ -23,7 +23,7 @@
 
   - name: adds ssh key for simone
     tags: always
-    authorized_keys:
+    ansible.posix.authorized_key:
       user: simone
       key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHeCEYD/KV0NbCmm2CgR84LSLJoc0Ru/sqw5FyPEaktd Ansible"
 
